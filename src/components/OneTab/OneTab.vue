@@ -1,11 +1,11 @@
 <template>
-  <div class="tab-wrapper" ref="tabWrap">
+  <div class="tab-wrapper van-hairline--bottom" ref="tabWrap">
     <div class="list">
-      <div 
-        class="list-item" 
-        :class="{active: active == index}" 
-        v-for="(item, index) in menuList" 
-        :key="index" 
+      <div
+        class="list-item"
+        :class="{active: active == index}"
+        v-for="(item, index) in menuList"
+        :key="index"
         @touchend="scrollTo(index, $event)"
         @touchstart="move = false"
         @touchmove="move = true"
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import utils from "@/utils/index.js";
 export default {
   data() {
     return {
@@ -134,7 +136,19 @@ export default {
       move: false
     };
   },
+  created() {
+    // this.getSideMenuData(this.menuList[this.active].title);
+  },
+  watch: {
+    active: {
+      immediate: true,
+      handler(i) {
+        this.getSideMenuData(this.menuList[this.active].title);
+      }
+    }
+  },
   methods: {
+    ...mapActions(["getSideMenuData"]),
     scrollTo(i, e) {
       if (this.move) {
         return;
@@ -145,23 +159,7 @@ export default {
       const itemWidth = e.target.offsetWidth;
       const itemLeft = e.target.getBoundingClientRect().left;
       const wrapperWidth = tabWrap.offsetWidth;
-      this.moveTo(tabWrap.scrollLeft, itemWidth / 2 + itemLeft - wrapperWidth / 2);
-      // 获取侧边栏数据 ( sidebar + data )
-    },
-    moveTo(start, end) {
-      let dis = 0;
-      let speed = 5;
-      if (end < 0) {
-        speed *= -1;
-      }
-      const t = setInterval(() => {
-        dis += speed;
-        this.$refs.tabWrap.scrollLeft = start + dis;
-        if (Math.abs(dis) > Math.abs(end)) {
-          this.$refs.tabWrap.scrollLeft = start + end;
-          clearInterval(t);
-        }
-      }, 2);
+      utils.moveTo(tabWrap.scrollLeft, itemWidth / 2 + itemLeft - wrapperWidth / 2, tabWrap, 'scrollLeft');
     },
   }
 };
@@ -194,21 +192,21 @@ export default {
         overflow: hidden;
         border: 2px solid transparent;
         margin-bottom: 6px;
-        transition: all .3s;
+        transition: all 0.3s;
       }
       .item-title {
         text-align: center;
         font-size: 12px;
         white-space: nowrap;
         padding: 0 5px;
-        transition: all .3s;
+        transition: all 0.3s;
       }
       &.active {
         .item-img {
           border: 2px solid @themeColor;
         }
         .item-title {
-          background-color: @themeColor ;
+          background-color: @themeColor;
           color: #fff;
           border-radius: 10px;
         }
