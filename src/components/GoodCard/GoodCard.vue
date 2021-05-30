@@ -11,21 +11,30 @@
       />
     </div>
     <div class="card-content">
-      <div class="title van-ellipsis">{{list.title}}</div>
-      <div class="desc van-ellipsis">{{list.desc}}</div>
+      <div class="title van-ellipsis">{{ list.title }}</div>
+      <div class="desc van-ellipsis">{{ list.desc }}</div>
       <div class="tag van-ellipsis">
-        <div class="tag-item" v-for="(item, index) in list.tags">{{item}}</div>
+        <div class="tag-item" v-for="(item, index) in list.tags" :key="index">
+          {{ item }}
+        </div>
       </div>
       <!-- <div class="sale">销量{{list.sale}}份</div> -->
       <div class="content-footer">
-        <div class="price" :class="{off: list.price_off? true : false}">
-          <div class="price-one">{{list.price_off? list.price_off : list.price}}</div>
-          <div class="price-dw">元/{{list.unit}}</div>
+        <div class="price" :class="{ off: list.price_off ? true : false }">
+          <div class="price-one">
+            {{ list.price_off ? list.price_off : list.price }}
+          </div>
+          <div class="price-dw">元/{{ list.unit }}</div>
           <div class="price-two">{{ list.price }}</div>
         </div>
         <div class="footer-item">
           <template v-if="num == 0">
-            <van-icon name="cart-circle" size="44" color="#ee0a24" @click="addCar" />
+            <van-icon
+              name="cart-circle"
+              size="44"
+              color="#ee0a24"
+              @click="addCar"
+            />
           </template>
           <template v-else>
             <van-stepper
@@ -52,8 +61,12 @@ export default {
       type: Object,
       default: () => {
         return {};
-      }
-    }
+      },
+    },
+    nofly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -67,7 +80,7 @@ export default {
         return this.cart[this.list.id] || 0;
       },
       set(v) {
-        if ((this.cart[this.list.id] || 0) < v) {
+        if ((this.cart[this.list.id] || 0) < v && !this.nofly) {
           const img = this.$refs[`img${this.list.id}`].$el;
           const target = document.getElementById("carIcon");
           const { left: startX, top: startY } = img.getBoundingClientRect();
@@ -80,16 +93,16 @@ export default {
           Animate({ startX, startY, endX, endY, src, width, height });
         }
         this.setCart({ id: this.list.id, num: v });
-      }
-    }
+      },
+    },
   },
   methods: {
     ...mapMutations(["setCart"]),
     addCar() {
       this.num = 1;
     },
-    handleChange(value) {}
-  }
+    handleChange(value) {},
+  },
 };
 </script>
 

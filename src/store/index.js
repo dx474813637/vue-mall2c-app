@@ -34,13 +34,19 @@ export default new Vuex.Store({
       // if(state.cart[id]) {
       //   state.cart[id] = num
       // }else {
-        Vue.set(state.cart, id, num)
+        if(num == 0) {
+          Vue.delete(state.cart, id)
+        }else {
+          Vue.set(state.cart, id, num)
+        }
+        
         storage.cart = JSON.stringify(state.cart)
       // }
       
     },
     emptyCart(state) {
-      state.cart = []
+      state.cart = {}
+      storage.removeItem('cart')
     }
   },
   actions: {
